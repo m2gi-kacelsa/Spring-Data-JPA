@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.guitar.db.model.Location;
 import com.guitar.db.repository.LocationJpaRepository;
-import com.guitar.db.repository.LocationRepository;
 
 @ContextConfiguration(locations = { "classpath:com/guitar/db/applicationTests-context.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -35,6 +34,21 @@ public class LocationPersistenceTests {
 		assertNotNull(locations);
 	}
 
+	@Test
+	public void testJpaAnd() {
+		List<Location> locations = locationJpaRepository.findByStateAndCountry("Utah", "United State");
+		assertNotNull(locations);
+		assertEquals("Utah", locations.get(0).getState());
+	}
+
+	@Test
+	public void testJpaOr() {
+		List<Location> locations = locationJpaRepository.findByStateOrCountry("Utah", "United State");
+		assertNotNull(locations);
+		assertEquals("Utah", locations.get(0).getState());
+	}
+	
+	
 	@Test
 	@Transactional
 	public void testSaveAndGetAndDelete() throws Exception {
@@ -58,7 +72,7 @@ public class LocationPersistenceTests {
 
 	@Test
 	public void testFindWithLike() throws Exception {
-		List<Location> locs = locationJpaRepository.findByStateLike("New%");
+		List<Location> locs = locationJpaRepository.findByStateStartingWith("New%");
 		assertEquals(4, locs.size());
 	}
 
